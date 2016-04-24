@@ -12,4 +12,4 @@ def ensure_pragma_key():
     if not hasattr(settings, 'PRAGMA_KEY') or not settings.PRAGMA_KEY:
         sys.stderr.write("There is no SQL Cipher key defined, it's unsafe to store in your settings. Please input your key.\n\n")
         key = getpass("Key: ")
-        settings.PRAGMA_KEY = key
+        settings.PRAGMA_KEY = key.decode("utf-8")
