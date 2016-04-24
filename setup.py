@@ -1,11 +1,12 @@
-from distutils.core import setup
-from distutils.command.install import INSTALL_SCHEMES
 import os
+
+from distutils.command.install import INSTALL_SCHEMES
+from setuptools import setup, find_packages
 
 root = os.path.dirname(os.path.abspath(__file__))
 os.chdir(root)
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 
 # Make data go to the right place.
 # http://groups.google.com/group/comp.lang.python/browse_thread/thread/35ec7b2fed36eaec/2105ee4d9e8042cb
@@ -23,7 +24,7 @@ setup(
     url="http://github.com/codasus/django-sqlcipher",
     license="Creative Commons Attribution-ShareAlike 3.0 Unported License",
     platforms=["any"],
-    packages=['sqlcipher'],
+    packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Framework :: Django",
