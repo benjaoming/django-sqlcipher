@@ -1,9 +1,11 @@
+from __future__ import unicode_literals
+
 from django.conf import settings
 from django.db.backends.signals import connection_created
 
 
 def sqlite_set_pragma(connection, **kwargs):
-    pragma_sql = "PRAGMA key='%s';" % (settings.PRAGMA_KEY,)
+    pragma_sql = "PRAGMA key='%s';" % (settings.PRAGMA_KEY.decode("utf-8"),)
     cursor = connection.cursor()
     cursor.execute(pragma_sql)
     cursor.close()
