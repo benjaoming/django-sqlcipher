@@ -1,6 +1,10 @@
 from django.core.management.commands.runserver import Command as RunserverCommand
 
-from ._mixins import PromptForPragmaKeyMixin
+from ._mixins import ensure_pragma_key
 
-class Command(PromptForPragmaKeyMixin, RunserverCommand):
-    pass
+
+class Command(RunserverCommand):
+
+    def inner_run(self, *args, **options):
+        ensure_pragma_key()
+        RunserverCommand.inner_run(self, *args, **options)

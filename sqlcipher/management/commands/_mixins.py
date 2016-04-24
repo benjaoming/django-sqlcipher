@@ -5,6 +5,13 @@ from django.conf import settings
 from getpass import getpass
 
 
+def ensure_pragma_key():
+    if not hasattr(settings, 'PRAGMA_KEY') or not settings.PRAGMA_KEY:
+        print("There is no SQL Cipher key defined, it's unsafe to store in your settings. Please input your key")
+        key = getpass("Key: ")
+        settings.PRAGMA_KEY = key
+
+
 class PromptForPragmaKeyMixin(object):
     """""
     This is a universal command that you can have other management commands
@@ -12,8 +19,5 @@ class PromptForPragmaKeyMixin(object):
     """
 
     def handle(self, *args, **options):
-        if not hasattr(settings, 'PRAGMA_KEY') or not settings.PRAGMA_KEY:
-            print("There is no SQL Cipher key defined, it's unsafe to store in your settings. Please input your key")
-            key = getpass("Key: ")
-            settings.PRAGMA_KEY = key
+        ensure_pragma_key()
         super(PromptForPragmaKeyMixin, self).handle(*args, **options)
