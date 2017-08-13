@@ -72,10 +72,10 @@ if six.PY2:
 class DatabaseWrapper(BaseDatabaseWrapper):
     Database = Database
 
-    def _cursor(self):
+    def _cursor(self, *args, **kwargs):
         if self.connection is None:
             setup()
-        return super(DatabaseWrapper, self)._cursor()
+        return super(DatabaseWrapper, self)._cursor(*args, **kwargs)
 
     def get_new_connection(self, conn_params):
         conn = Database.connect(**conn_params)
@@ -90,7 +90,7 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         conn.create_function("django_power", 2, _sqlite_power)
         return conn
 
-    def create_cursor(self):
+    def create_cursor(self, *args, **kwargs):
         return self.connection.cursor(factory=SQLiteCursorWrapper)
 
 
