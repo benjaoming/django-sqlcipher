@@ -5,7 +5,6 @@ from django.db.backends.sqlite3.base import DatabaseWrapper as BaseDatabaseWrapp
     _sqlite_datetime_extract, _sqlite_datetime_trunc, _sqlite_time_extract, \
     _sqlite_regexp, _sqlite_format_dtdelta, _sqlite_power, FORMAT_QMARK_REGEX
 
-from ..signals import setup
 
 from pysqlcipher import dbapi2 as Database
 
@@ -73,16 +72,12 @@ class DatabaseWrapper(BaseDatabaseWrapper):
     Database = Database
 
     def create_cursor(self, name=None):
-        if name:
-            base_cursor = super(DatabaseWrapper, self).create_cursor(name)
-        else:
-            base_cursor = super(DatabaseWrapper, self).create_cursor()
-        return SQLiteCursorWrapper(base_cursor)
-
-    # def _cursor(self, *args, **kwargs):
-    #     if self.connection is None:
-    #         setup()
-    #     return super(DatabaseWrapper, self)._cursor(*args, **kwargs)
+        pragma_sql = "PRAGMA key='%s';" % (settings.PRAGMA_KEY,)
+        cursor = self.connection.cursor(factory=SQLiteCursorWrapper)
+        cursor.execute(pragma_sql)
+        cursor.close()
+        cursor = self.connection.cursor(factory=SQLiteCursorWrapper)
+        return cursor
 
     def get_new_connection(self, conn_params):
         conn = Database.connect(**conn_params)
@@ -96,9 +91,6 @@ class DatabaseWrapper(BaseDatabaseWrapper):
         conn.create_function("django_format_dtdelta", 3, _sqlite_format_dtdelta)
         conn.create_function("django_power", 2, _sqlite_power)
         return conn
-
-    def create_cursor(self, *args, **kwargs):
-        return self.connection.cursor(factory=SQLiteCursorWrapper)
 
 
 class SQLiteCursorWrapper(Database.Cursor):
