@@ -72,10 +72,17 @@ if six.PY2:
 class DatabaseWrapper(BaseDatabaseWrapper):
     Database = Database
 
-    def _cursor(self, *args, **kwargs):
-        if self.connection is None:
-            setup()
-        return super(DatabaseWrapper, self)._cursor(*args, **kwargs)
+    def create_cursor(self, name=None):
+        if name:
+            base_cursor = super(DatabaseWrapper, self).create_cursor(name)
+        else:
+            base_cursor = super(DatabaseWrapper, self).create_cursor()
+        return SQLiteCursorWrapper(base_cursor)
+
+    # def _cursor(self, *args, **kwargs):
+    #     if self.connection is None:
+    #         setup()
+    #     return super(DatabaseWrapper, self)._cursor(*args, **kwargs)
 
     def get_new_connection(self, conn_params):
         conn = Database.connect(**conn_params)
